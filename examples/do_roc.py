@@ -5,7 +5,7 @@ from tqdm import tqdm
 from torch import optim
 import matplotlib.pyplot as plt
 from utils.options import handleOptions
-from buildLikelihood import full_likelihood
+from utils.buildLikelihood import full_likelihood
 
 def main():
 
