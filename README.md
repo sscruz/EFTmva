@@ -22,8 +22,8 @@ pip install uproot awkward
 Examples of usage would be 
 
 ```
-python train.py --term ctg_ctg --files /path/to/files/*.root
-python train.py --bsm-point ctg=1:ctq1=1 --files /path/to/files/*.root
+python train.py --name training_v1 --term ctg_ctg --files /path/to/files/*.root
+python train.py --name training_v1 --bsm-point ctg=1:ctq1=1 --files /path/to/files/*.root
 ```
 
 The data is provided through `rootfiles` that are converted to `pytorch` tensors. The tensors are stored in separate files for the input features, the SM weights and the BSM weights, the latter with a name specific to the BSM point / term chosen. If any of these need to be reproduced, the associated file can be erased or pass the argument `--forceRebuild`
