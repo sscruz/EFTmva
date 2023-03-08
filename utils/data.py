@@ -45,7 +45,7 @@ class eftDataLoader( data.Dataset ):
                 self.coef_map[(self.wc_list[i],self.wc_list[j])]=index
                 index+=1
 
-
+        print(self.coef_map)
                 
     def build_tensors( self ):
 
@@ -92,7 +92,18 @@ class eftDataLoader( data.Dataset ):
                 if self.term is not None:
                     bsm_weight = eft_coefficients[:,self.coef_map[tuple(self.term.split("_"))]].to_numpy()
                 else:
-                    raise RuntimeError("Not yet")
+                    coef_values = self.bsm_point.split(':')
+                    bsm_weight = eft_coefficients[:,0].to_numpy()
+                    for i1, coef_value in enumerate(coef_values):
+                        coef,value = coef_value.split("="); value = float(value)
+                        bsm_weight += eft_coefficients[:,self.coef_map[(coef,'sm')]].to_numpy()*value       # linear term
+                        bsm_weight += eft_coefficients[:,self.coef_map[(coef,coef)]].to_numpy()*value*value # quadratic term
+                        for i2, coef_value2 in enumerate(coef_values):
+                            if i2 >= i1: continue
+                            coef2,value2 = coef_value2.split("="); value2=float(value2)
+                            idx = self.coef_map[(coef,coef2)] if (coef,coef2) in self.coef_map else self.coef_map[(coef2, coef)]
+                            bsm_weight += eft_coefficients[:,idx].to_numpy()*value*value2 # crossed terms
+
                 
                 outputs[self.bsm_name] = np.append( outputs[self.bsm_name], bsm_weight )
 
