@@ -22,7 +22,7 @@ def main():
     parser.add_argument("--name", type=str, default="v1", help="Name to store net.");
     parser.add_argument("--learning-rate", type=float, default=0.00000005, help="Optimizer learning rate")
     parser.add_argument("--momentum", type=float, default=0.9, help="Momentum for optimizer")
-    parser.add_argument("--wc-list", type=str, default="ctu1,cqd1,cqq13,ctu8,cqu1,cqq11,cqq83,ctd1,ctd8,ctg,ctq1,cqq81,cqu8,cqd8,ctq8", help="Comma-separated of WC in the sample (by order)")
+    parser.add_argument("--wc-list", type=str, default="sm,ctu1,cqd1,cqq13,ctu8,cqu1,cqq11,cqq83,ctd1,ctd8,ctg,ctq1,cqq81,cqu8,cqd8,ctq8", help="Comma-separated of WC in the sample (by order)")
     parser.add_argument("--features", type=str, default="Lep1_pt,Lep2_pt,Lep1_eta,Lep2_eta,Lep1_phi,Lep2_phi,nJet30,jet1_pt,jet2_pt", help="Comma-separated of WC in the sample (by order)")
     parser.add_argument("--forceRebuild", action="store_true", default=False, help="Force reproduction of torch tensors from rootfiles")
     parser.add_argument("--configuration-file", type=str, default=None, help="Load parameters from toml configuration file. The configuration file will be overriden by other command line options. The --name argument will always be taken from the command line option and the default")
@@ -87,6 +87,9 @@ def main():
     plt.plot( range(args.epochs), loss_test , label="Testing dataset")
     plt.savefig(f'{directory_name}/loss.png')
     plt.clf()
+
+    
+
     
 if __name__=="__main__":
     main()
