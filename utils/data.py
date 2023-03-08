@@ -45,12 +45,11 @@ class eftDataLoader( data.Dataset ):
                 self.coef_map[(self.wc_list[i],self.wc_list[j])]=index
                 index+=1
 
-        print(self.coef_map)
                 
     def build_tensors( self ):
 
         if self.term is not None:
-            self.bsm_name = "bsm_weight" + ('_'.join( self.term ) )
+            self.bsm_name = "bsm_weight" +  self.term
         else:
             self.bsm_name = "bsm_weight_" + self.bsm_point.replace("=","_").replace(":","_")
 
