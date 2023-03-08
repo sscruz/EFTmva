@@ -52,7 +52,7 @@ class eftDataLoader( data.Dataset ):
         if self.term is not None:
             self.bsm_name = "bsm_weight" + ('_'.join( self.term ) )
         else:
-            self.bsm_name = "bsm_weight_" + self.bsm_point
+            self.bsm_name = "bsm_weight_" + self.bsm_point.replace("=","_").replace(":","_")
 
         if self.forceRebuild:
             os.system(f'rm -f {self.out_path}/*.p')
