@@ -50,6 +50,8 @@ def main():
 
     plt.plot( cum_parametric_sm, cum_parametric_bsm, label="Parametric discriminator")
     plt.plot( cum_dedicated_sm, cum_dedicated_bsm, label="Dedicated discriminator")
+    plt.savefig(f"{directory_name}/roc.png")
+    plt.clf()
 
 
 
