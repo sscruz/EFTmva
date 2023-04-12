@@ -5,18 +5,51 @@ from tqdm import tqdm
 from torch import optim
 import matplotlib.pyplot as plt
 from utils.options import handleOptions
+from utils.metrics import net_eval
 
-def save_and_plot(net, loss_test, loss_train, label, directory_name, bsm_name):
+def save_and_plot(net, loss_test, loss_train, label, directory_name, bsm_name, test):
 
+    fig, ax = plt.subplots(1, 1, figsize=[8,8])
     torch.save(net, f'{directory_name}/network_{bsm_name}_{label}.p')
 
-    plt.plot( range(len(loss_test)), loss_train, label="Training dataset")
-    plt.plot( range(len(loss_test)), loss_test , label="Testing dataset")
-    plt.legend()
-    plt.savefig(f'{directory_name}/loss_{label}.png')
+    ax.plot( range(len(loss_test)), loss_train, label="Training dataset")
+    ax.plot( range(len(loss_test)), loss_test , label="Testing dataset")
+    ax.legend()
+    fig.savefig(f'{directory_name}/loss_{label}.png')
     plt.clf()
 
-
+    fig, ax = plt.subplots(1, 1, figsize=[12,7])
+    bins = np.linspace(0,1,100)
+    sm_hist,_,_  = ax.hist(net(test[:][2]).flatten().detach().numpy(), 
+                           weights=test[:][0], bins=bins, alpha=0.5, 
+                           label='SM', density=True)
+    
+    bsm_hist,_,_ = ax.hist(net(test[:][2]).flatten().detach().numpy(), 
+                           weights=test[:][1], bins=bins, alpha=0.5, 
+                           label='BSM', density=True)
+    ax.set_xlabel('Network Output', fontsize=12)
+    ax.legend()
+    fig.savefig(f'{directory_name}/net_out_{label}.png')
+    plt.clf()
+    
+    roc, auc, a = net_eval(bins, sm_hist, bsm_hist, n_points=100)
+    
+    fig, ax = plt.subplots(1, 1, figsize=[8,8])
+    ax.plot(roc[:,0], roc[:,1], label='Network Performance')
+    ax.plot([0,1],[0,1], ':', label='Baseline')
+    ax.legend()
+    ax.set_title('Linear', fontsize=16)
+    ax.set_xlabel('False Positive Rate', fontsize=14)
+    ax.set_ylabel('True Positive Rate', fontsize=14)
+    fig.savefig(f'{directory_name}/ROC_{label}.png')
+    plt.clf()
+    
+    f = open(f'{directory_name}/performance_{label}.txt','w+')
+    f.write(    
+        'Area under ROC: ' + str(auc) + '\n' + 
+        'Accuracy:       ' + str(a) + '\n'
+    )
+    f.close()
 
 def main():
 
@@ -47,23 +80,20 @@ def main():
 
 
     loss_train = []; loss_test=[]
-    for epoch in range(args.epochs):
+    for epoch in tqdm(range(args.epochs)):
         
-        for i,(sm_weight, bsm_weight, features) in tqdm( enumerate(dataloader)):
+        for i,(sm_weight, bsm_weight, features) in enumerate(dataloader):
             optimizer.zero_grad()
             loss = model.cost_from_batch(features, sm_weight, bsm_weight, args.device)
             loss.backward()
             optimizer.step()
         loss_train.append( model.cost_from_batch(train[:][2] , train[:][0],  train[:][1], args.device).item())
         loss_test .append( model.cost_from_batch(test [:][2] , test [:][0],  test [:][1], args.device).item())
-        
-        if epoch%10==4: 
-            save_and_plot( model.net, loss_test, loss_train, f"epoch_{epoch}", f"{directory_name}", signal_dataset.bsm_name)
+        if epoch%200==0: 
+            save_and_plot( model.net, loss_test, loss_train, f"epoch_{epoch}", f"{directory_name}", signal_dataset.bsm_name,
+                         test)
 
-    save_and_plot( model.net, loss_test, loss_train, "last", f"{directory_name}", signal_dataset.bsm_name)
-
-    
-
+    save_and_plot( model.net, loss_test, loss_train, "last", f"{directory_name}", signal_dataset.bsm_name, test)
     
 if __name__=="__main__":
     main()
