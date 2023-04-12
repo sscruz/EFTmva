@@ -3,7 +3,7 @@
 ## Set-up instructions
 
 ```
-conda create -n eft_mva python=python=3.10.8
+conda create -n eft_mva python=3.10.8
 conda activate eft_mva
 
 # get pytorch https://pytorch.org/get-started/locally/
@@ -12,6 +12,7 @@ pip install tqdm
 pip install matplotlib
 pip install pyyaml
 pip install uproot awkward
+pip install torch
 
 ```
 
