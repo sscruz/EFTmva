@@ -40,3 +40,40 @@ def handleOptions():
         setattr( args, op, val)
         
     return args, directory_name
+
+def rocOptions():
+    parser = ArgumentParser()
+    parser.add_argument("--signal", type=str, default=None, 
+                        help="directory of signal sample")
+    parser.add_argument("--likelihood", type=str, default=None, 
+                        help="yaml file containing information needed for building likeliood")
+    parser.add_argument("--name", type=str, default="v1", 
+                        help="Name of directory to store plots")
+    parser.add_argument("--test-point",  type=str, default=None, 
+                        help="Train SM against a given BSM point. Syntax is operator1=value2:operator2=value2:...")
+    args = parser.parse_args()
+    
+    with open(f'{args.signal}/config.yml') as f:
+        config = yaml.safe_load(f.read())
+    del config['name']
+    for key in config.keys():
+        parser.add_argument(f'--{key}' , default=config[key])
+    args = parser.parse_args()
+    
+    directory_name = time.strftime('%Y%m%d-%H%M%S') + "_" + args.name
+    os.system(f"mkdir {directory_name}")
+    
+    if args.configuration_file:
+        with open(args.configuration_file) as f:
+            config = yaml.safe_load(f.read())
+    else:
+        config = {}
+    config = {**config, **vars(args)}
+    
+    with open(f"{directory_name}/config.yml","w") as f:
+        f.write( yaml.dump(config)) 
+
+    for op, val in config.items():
+        setattr( args, op, val)
+        
+    return args, directory_name
