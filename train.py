@@ -80,9 +80,9 @@ def main():
 
 
     loss_train = []; loss_test=[]
-    for epoch in tqdm(range(args.epochs)):
+    for epoch in range(args.epochs):
         
-        for i,(sm_weight, bsm_weight, features) in enumerate(dataloader):
+        for i,(sm_weight, bsm_weight, features) in tqdm(enumerate(dataloader)):
             optimizer.zero_grad()
             loss = model.cost_from_batch(features, sm_weight, bsm_weight, args.device)
             loss.backward()
