@@ -14,6 +14,7 @@ def commonOptions():
     parser.add_argument("--features", type=str, default="Lep1_pt,Lep2_pt,Lep1_eta,Lep2_eta,Lep1_phi,Lep2_phi,nJet30,jet1_pt,jet2_pt", help="Comma-separated of WC in the sample (by order)")
     parser.add_argument("--forceRebuild", action="store_true", default=False, help="Force reproduction of torch tensors from rootfiles")
     parser.add_argument("--configuration-file", type=str, default=None, help="Load parameters from toml configuration file. The configuration file will be overriden by other command line options. The --name argument will always be taken from the command line option and the default")
+    parser.add_argument("--tree-name", type=str, default="Events", help="Name of input tree")
     return parser
 
 

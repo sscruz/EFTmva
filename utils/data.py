@@ -25,6 +25,7 @@ class eftDataLoader( data.Dataset ):
         self.out_path = "/".join(self.files[0].split("/")[:-2])
         self.forceRebuild = args.forceRebuild
         self.device = args.device
+        self.tree_name = args.tree_name
 
         self.buildMapping()
         self.build_tensors()
@@ -77,7 +78,7 @@ class eftDataLoader( data.Dataset ):
         print("Loading files, this may take a while")
         for fil in tqdm.tqdm(self.files):
             tf = uproot.open( fil )
-            events = tf["Events"]
+            events = tf[self.tree_name]
 
             # First we read the EFT stuff 
             if redoSM or redoBSM:
